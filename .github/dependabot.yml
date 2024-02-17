@@ -1,0 +1,18 @@
+version: 2
+
+registries:
+  cloud-libraries-maven:
+    type: maven-repository
+    url: https://maven.pkg.github.com/greenbone/cloud
+    username: ${{secrets.OZGEN_BOT}}
+    password: ${{secrets.OZGEN_BOT_TOKEN}}
+
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    registries:
+      - cloud-libraries-maven
+    schedule:
+      interval: "daily"
+    rebase-strategy: 'auto'
+
