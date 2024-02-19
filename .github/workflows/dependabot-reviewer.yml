@@ -1,0 +1,36 @@
+name: Dependabot reviewer
+
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  contents: write
+  issues: write
+
+jobs:
+  review-dependabot-pr:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v1.3.1
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Add 'calendar release' label to PR
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GH_REPO: ${{ github.repository }}
+            NUMBER: ${{ github.event.issue.number }}
+            LABELS: calendar release
+
+      - name: Approve dependency updates
+        run: gh pr review $PR_URL --approve -b "I'm **approving** this pull request because **it includes dependency update**"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
