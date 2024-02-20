@@ -46,4 +46,10 @@ jobs:
         if: steps.pr_review_status.outputs.state != 'APPROVED'
         uses: actions/checkout@v2
 
+      - name: Add 'calendar release' label to PR
+        run: gh pr edit "$PR_NUMBER" --add-label "calendar release"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
 
