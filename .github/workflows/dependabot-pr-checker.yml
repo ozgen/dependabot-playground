@@ -1,0 +1,39 @@
+name: Check Dependabot PRs
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Runs every Monday at 8 AM UTC
+  workflow_dispatch:  # This line allows manual triggering of the workflow
+
+jobs:
+  check-old-dependabot-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch old Dependabot PRs
+        id: fetch_prs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OLD_PRS=$(gh pr list --label "dependencies" --state "open" --json url,createdAt,title --jq '.[] | select(.createdAt < (now))')
+          echo $OLD_PRS
+          if [[ -z "$OLD_PRS" ]]; then
+            echo "OLD_PRS_FOUND=false" >> $GITHUB_ENV
+          else
+            echo "$OLD_PRS" | jq -r '.[] | "- **\(.title)**: [View PR](\(.url))"' > old_pr_list.txt
+            echo "OLD_PRS_FOUND=true" >> $GITHUB_ENV
+          fi
+          echo $OLD_PRS_FOUND
+      - name: Notify Mattermost
+        if: env.OLD_PRS_FOUND == 'true'
+        env:
+          WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+        run: |
+          REPO_NAME=${{ github.repository }}
+          
+          MESSAGE_TEXT=$(cat old_pr_list.txt)
+          
+          echo $MESSAGE_TEXT
