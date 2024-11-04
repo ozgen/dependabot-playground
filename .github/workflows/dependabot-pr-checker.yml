@@ -19,7 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Calculate the timestamp for 7 days ago
-          SEVEN_DAYS_AGO=$(date -d '7 days ago' +%s)
+          SEVEN_DAYS_AGO=$(date -d '1 minute ago' +%s)
           echo "Timestamp for 7 days ago: $SEVEN_DAYS_AGO"
 
           # Retrieve all open Dependabot PRs
