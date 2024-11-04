@@ -50,4 +50,4 @@ jobs:
           MESSAGE_TEXT=$(cat old_pr_list.txt)
           
           # Send the message to Mattermost
-          echo MESSAGE_TEXT
+          echo $MESSAGE_TEXT
