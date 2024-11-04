@@ -20,6 +20,8 @@ jobs:
             | jq -r '.[-1].state')
           echo "The latest review state of the PR is: $review_state"
           echo "::set-output name=state::$review_state"
+          REPO_NAME=${{ github.repository }}
+          echo $REPO_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
