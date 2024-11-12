@@ -47,7 +47,8 @@ jobs:
           REPO_NAME=${{ github.repository }}
           
           # Build the message text from the PR list
-          MESSAGE_TXT=steps.fetch_prs.outputs.MESSAGE_TEXT
+          echo "${{ steps.fetch_prs.outputs.MESSAGE_TEXT }}"
+          MESSAGE_TXT=${{ steps.fetch_prs.outputs.MESSAGE_TEXT }}
           
           # Send the message to Mattermost
           echo $MESSAGE_TXT
