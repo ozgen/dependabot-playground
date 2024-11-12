@@ -32,14 +32,15 @@ jobs:
             '.[] | select((.createdAt | fromdateiso8601) < $cutoff)')
 
           if [[ -z "$OLD_PRS" ]]; then
-            echo "OLD_PRS_FOUND=false" >> $GITHUB_ENV
+            echo "OLD_PRS_FOUND=false" >> $GITHUB_OUTPUT
           else
-            echo "$OLD_PRS" | jq -r '. | "- **#\(.number) - \(.title)** by \(.author.login): [View PR](\(.url))"' > old_pr_list.txt
-            echo "OLD_PRS_FOUND=true" >> $GITHUB_ENV
+            echo "$OLD_PRS" | jq -r '. | "- **\(.title)**: [View PR](\(.url))"' > old_pr_list.txt
+            echo "OLD_PRS_FOUND=true" >> $GITHUB_OUTPUT
+            echo "MESSAGE_TEXT=$(<old_pr_list.txt)" >> $GITHUB_OUTPUT
           fi
 
       - name: Notify Mattermost
-        if: env.OLD_PRS_FOUND == 'true'
+        if: steps.fetch_prs.outputs.OLD_PRS_FOUND == 'true'
         env:
           WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
         run: |
@@ -47,7 +48,7 @@ jobs:
           REPO_NAME=${{ github.repository }}
           
           # Build the message text from the PR list
-          MESSAGE_TEXT=$(cat old_pr_list.txt)
+          MESSAGE_TXT=steps.fetch_prs.outputs.MESSAGE_TEXT
           
           # Send the message to Mattermost
-          echo $MESSAGE_TEXT
+          echo $MESSAGE_TXT
