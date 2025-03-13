@@ -1,57 +1,57 @@
-name: Check Dependabot PRs
-
-on:
-  schedule:
-    - cron: '0 8 * * 1'  # Runs every Monday at 8 AM UTC
-  workflow_dispatch:  # Allows manual triggering of the workflow
-
-jobs:
-  check-old-dependabot-prs:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch old Dependabot PRs
-        id: fetch_prs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Calculate the timestamp for 7 days ago
-          SEVEN_DAYS_AGO=$(date -d '1 minute ago' +%s)
-          echo "Timestamp for 7 days ago: $SEVEN_DAYS_AGO"
-
-          # Retrieve all open Dependabot PRs
-          gh pr list --label "dependencies" --state "open" --json url,createdAt,title,author,number > all_dependabot_prs.json
-          echo "All Dependabot PRs:"
-          cat all_dependabot_prs.json | jq .
-
-          # Filter PRs older than 7 days
-          OLD_PRS=$(cat all_dependabot_prs.json | jq --argjson cutoff "$SEVEN_DAYS_AGO" \
-            '.[] | select((.createdAt | fromdateiso8601) < $cutoff)')
-
-          if [[ -z "$OLD_PRS" ]]; then
-            echo "OLD_PRS_FOUND=false" >> $GITHUB_OUTPUT
-          else
-            echo "$OLD_PRS" | jq -r '. | "- **\(.title)**: [View PR](\(.url))"' > old_pr_list.txt
-            echo "OLD_PRS_FOUND=true" >> $GITHUB_OUTPUT
-            {
-              echo "[DEPENDABOT ALERT] :warning: Overdue Dependabot PRs in Repository: $REPO_NAME"
-              cat old_pr_list.txt
-            } > message_with_header.txt
-            MESSAGE_TEXT=$(<message_with_header.txt)
-            echo "MESSAGE_TEXT<<EOF" >> $GITHUB_OUTPUT
-            echo "$MESSAGE_TEXT" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Notify Mattermost
-        if: steps.fetch_prs.outputs.OLD_PRS_FOUND == 'true'
-        run: |
-          # Get repository name
-          REPO_NAME=${{ github.repository }}
-          
-          # Build the message text from the PR list
-          echo "${{ steps.fetch_prs.outputs.MESSAGE_TEXT }}"
-          
+#name: Check Dependabot PRs
+#
+#on:
+#  schedule:
+#    - cron: '0 8 * * 1'  # Runs every Monday at 8 AM UTC
+#  workflow_dispatch:  # Allows manual triggering of the workflow
+#
+#jobs:
+#  check-old-dependabot-prs:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Fetch old Dependabot PRs
+#        id: fetch_prs
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          # Calculate the timestamp for 7 days ago
+#          SEVEN_DAYS_AGO=$(date -d '1 minute ago' +%s)
+#          echo "Timestamp for 7 days ago: $SEVEN_DAYS_AGO"
+#
+#          # Retrieve all open Dependabot PRs
+#          gh pr list --label "dependencies" --state "open" --json url,createdAt,title,author,number > all_dependabot_prs.json
+#          echo "All Dependabot PRs:"
+#          cat all_dependabot_prs.json | jq .
+#
+#          # Filter PRs older than 7 days
+#          OLD_PRS=$(cat all_dependabot_prs.json | jq --argjson cutoff "$SEVEN_DAYS_AGO" \
+#            '.[] | select((.createdAt | fromdateiso8601) < $cutoff)')
+#
+#          if [[ -z "$OLD_PRS" ]]; then
+#            echo "OLD_PRS_FOUND=false" >> $GITHUB_OUTPUT
+#          else
+#            echo "$OLD_PRS" | jq -r '. | "- **\(.title)**: [View PR](\(.url))"' > old_pr_list.txt
+#            echo "OLD_PRS_FOUND=true" >> $GITHUB_OUTPUT
+#            {
+#              echo "[DEPENDABOT ALERT] :warning: Overdue Dependabot PRs in Repository: $REPO_NAME"
+#              cat old_pr_list.txt
+#            } > message_with_header.txt
+#            MESSAGE_TEXT=$(<message_with_header.txt)
+#            echo "MESSAGE_TEXT<<EOF" >> $GITHUB_OUTPUT
+#            echo "$MESSAGE_TEXT" >> $GITHUB_OUTPUT
+#            echo "EOF" >> $GITHUB_OUTPUT
+#          fi
+#
+#      - name: Notify Mattermost
+#        if: steps.fetch_prs.outputs.OLD_PRS_FOUND == 'true'
+#        run: |
+#          # Get repository name
+#          REPO_NAME=${{ github.repository }}
+#
+#          # Build the message text from the PR list
+#          echo "${{ steps.fetch_prs.outputs.MESSAGE_TEXT }}"
+#
