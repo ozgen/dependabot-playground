@@ -44,7 +44,7 @@ jobs:
 
       - name: Checkout Repository
         if: steps.pr_review_status.outputs.state != 'APPROVED'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
       - name: Add 'calendar release' label to PR
         run: gh pr edit "$PR_NUMBER" --add-label "calendar release"
