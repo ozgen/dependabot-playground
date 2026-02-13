@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.uuid</groupId>
-            <artifactId>java-uuid-generator</artifactId>
+            <artifactId>java-uuid-generator</artifactId><!-- lookup parent from repository -->
             <version>5.1.0</version>
         </dependency>
         <dependency>
