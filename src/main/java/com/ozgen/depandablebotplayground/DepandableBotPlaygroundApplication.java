@@ -8,6 +8,7 @@ public class DepandableBotPlaygroundApplication {
 
     public static void main(String[] args) {
         System.out.println("hello 111 test");
+        System.out.println("hello 111 test");
         SpringApplication.run(DepandableBotPlaygroundApplication.class, args);
     }
 
