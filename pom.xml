@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.5</version>
-        <relativePath/> <!-- lookup parent from repository 11 -->
+        <relativePath/> <!-- lookup parent from repository 111 -->
     </parent>
     <groupId>com.ozgen</groupId>
     <artifactId>depandable-bot-playground</artifactId>
