@@ -8,7 +8,7 @@ class DepandableBotPlaygroundApplicationTests {
 
     @Test
     void contextLoads() {
-        // test 1
+        // test
     }
 
 }
