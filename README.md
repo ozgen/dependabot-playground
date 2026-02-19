@@ -33,4 +33,4 @@ While automation simplifies dependency management, we prioritize security:
 
 - **Automated Testing**: All updates go through our rigorous automated test suite to ensure compatibility and stability.
 - **Manual Oversight**: Critical updates are reviewed manually by the team to ensure they meet our standards.
-- **Immediate Revert**: In case of any issues post-merge, we have a process in place for the immediate reversion of changes.ast
+- **Immediate Revert**: In case of any issues post-merge, we have a process in place for the immediate reversion of changes.
