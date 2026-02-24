@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DepandableBotPlaygroundApplication {
 
     public static void main(String[] args) {
+        System.out.println("hello 1 world");
         SpringApplication.run(DepandableBotPlaygroundApplication.class, args);
     }
 
