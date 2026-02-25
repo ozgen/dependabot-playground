@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DepandableBotPlaygroundApplication {
 
     public static void main(String[] args) {
-        //test
+        System.out.println("null"); 
         SpringApplication.run(DepandableBotPlaygroundApplication.class, args);
     }
 
